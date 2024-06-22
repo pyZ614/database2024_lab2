@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="../../static/bootstrap/css/bootstrap.css" rel="stylesheet" type="text/css">
+    <link href="../../static/css/dashboard.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <!--<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>-->
+    <script src="../../static/bootstrap/js/bootstrap.min.js"></script>
+    <script>
+        $(function () {
+            $('#alert').alert()
+        })
+    </script>
+    <title> 管理员入库 </title>
+</head>
+<body>
+<nav class="navbar navbar-dark sticky-top flex-md-nowrap p-0 shadow" style="background-color: #29abff;">
+    <a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="/admin_index/" style="font-weight: bold;font-size: x-large;">图书管理系统</a>
+    <span style="font-size: medium; color: #ffffff; margin-top: 0px; font-weight: bold;font-size: large;">欢迎  {{ aname }}</span>
+    <ul class="navbar-nav px-3">
+        <li class="nav-item text-nowrap">
+            <a class="nav-link" href="/logout_view/" style="font-weight: bold;color: #ffffff">退出登录</a>
+        </li>
+    </ul>
+</nav>
+<div class="container-fluid">
+    <div class="row">
+        <!--侧边栏-->
+        <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+            <div class="sidebar-sticky pt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin_index/">
+                            <i class="zi zi_service"></i>
+                            <span>管理员首页</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin_search/">
+                            <i class="zi zi_search"></i>
+                            <span>书目状态查询</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin_borrow/">
+                            <i class="zi zi_squareDown"></i>
+                            <span>借书</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin_return/">
+                            <i class="zi zi_squareUp"></i>
+                            <span>还书</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/admin_in/">
+                            <i class="zi zi_squarePlus"></i>
+                            <span>入库</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin_out/">
+                            <i class="zi zi_squareLess"></i>
+                            <span>出库</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">图书入库</h1>
+            </div>
+            <form role="form" action="/admin_in/" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <span class="badge badge-pill badge-primary">必填</span>
+                <div class="form-group row">
+                    <div class="col-sm-3">
+                        <label for="isbn" class="col-form-label">ISBN号</label>
+                        <input name="isbn" type="text" class="form-control" id="isbn" placeholder="请输入ISBN号" value="{{ isbn }}" autofocus>
+                    </div>
+                    <div class="col-sm-3">
+                        <label for="num" class="col-form-label"> 入库数量 </label>
+                        <input name="num" type="number" min="1" class="form-control" id="num" placeholder="请输入入库数量" value="{{ num }}">
+                    </div>
+                    <div class="col-sm-3">
+                        <label for="book_image" class="col-form-label"> 图片上传 </label>
+                        <input type="file" name="book_image" id="book_image" class="form-control-file">
+                    </div>
+                </div>
+                <hr style="border-top:1px solid #dee2e6;" width="100%" color="#dee2e6" size=1>
+                <span class="badge badge-pill badge-primary">新书录入时填写</span>
+                <div class="form-group row">
+                    <div class="col-sm-3">
+                        <label for="bname" class="col-form-label"> 书名</label>
+                        <input name="bname" type="text" class="form-control" id="bname" placeholder="请输入书名" value="{{ bname }}">
+                    </div>
+                    <div class="col-sm-3">
+                        <label for="author" class="col-form-label">作者</label>
+                        <input name="author" type="text" class="form-control" id="author" placeholder="请输入作者" value="{{ author }}" autofocus>
+                    </div>
+                    <div class="col-sm-3">
+                        <label for="pub" class="col-form-label"> 出版社 </label>
+                        <input name="pub" type="text" class="form-control" id="pub" placeholder="请输入出版社" value="{{ pub }}">
+                    </div>
+                    <div class="col-sm-3">
+                        <label for="pubtime" class="col-form-label">出版年月（年-月-日）</label>
+                        <input name="pubtime" type="text" class="form-control" id="pubtime" placeholder="请输入出版年月yyyy-mm-dd" value="{{ pubtime }}" autofocus>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary mt-2">入库</button>
+                <br><br>
+                {% if msg %}
+                <div id="alert" class="alert alert-primary alert-dismissible fade show" role="alert" style="display: inline-flex">
+                    {{ msg }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {% endif %}
+            </form>            
+        </main>
+
+    </div>
+</div>
+</body>
+</html>
+<style>
+    body{
+        background-image:url("../../static/img/background.jpg");
+        background-size: cover;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        background-repeat: no-repeat;
+        background-attachment:fixed;
+    }
+</style>

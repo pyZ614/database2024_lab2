@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="../../static/bootstrap/css/bootstrap.css" rel="stylesheet" type="text/css">
+    <link href="../../static/css/dashboard.css" rel="stylesheet">
+    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+    <script src="../../static/bootstrap/js/bootstrap.min.js"></script>
+    <title> 读者书目状态查询 </title>
+</head>
+<body>
+<nav class="navbar navbar-dark sticky-top flex-md-nowrap p-0 shadow" style="background-color: #29abff;">
+    <a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="/dz_index/" style="font-weight: bold;font-size: x-large;">图书管理系统</a>
+    <span style="font-size: medium; color: #ffffff; margin-top: 0px; font-weight: bold;font-size: large;">欢迎  {{ rname }}</span>
+    <ul class="navbar-nav px-3">
+        <li class="nav-item text-nowrap">
+            <a class="nav-link" href="/logout_view/" style="font-weight: bold;color: #ffffff">退出登录</a>
+        </li>
+    </ul>
+</nav>
+<div class="container-fluid">
+    <div class="row">
+        <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+            <div class="sidebar-sticky pt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/reader_index/">
+                            <i class="zi zi_service"></i>
+                            <span>读者首页</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/reader_search/">
+                            <i class="zi zi_search"></i>
+                            <span>书目状态查询</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/reader_reserve/">
+                            <i class="zi zi_squareDown"></i>
+                            <span>预约登记</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/reader_reserve2/">
+                            <i class="zi zi_squareDown"></i>
+                            <span>取消预约登记</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/reader_person/">
+                            <i class="zi zi_squareUp"></i>
+                            <span>个人状态查询</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+</div>
+<main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+        <h1 class="h2">书目状态查询</h1>
+    </div>
+    <form role="form" action="/reader_search/" method="post" class="container-fluid">
+        {% csrf_token %}
+        <div class="form-group row">
+            <label for="bname" class="col-md-1 col-form-label">书名</label>
+            <div class="col-sm-2">
+                <input name="bname" type="text" class="form-control" id="bname" placeholder="" value="{{ bname }}" autofocus>
+            </div>
+            <label for="author" class="col-md-1 col-form-label"> 作者 </label>
+            <div class="col-sm-2">
+                <input name="author" type="text" class="form-control" id="author" placeholder="" value="{{ author }}" autofocus>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="isbn" class="col-md-1 col-form-label"> ISBN号 </label>
+            <div class="col-sm-2">
+                <input name="isbn" type="text" class="form-control" id="isbn" placeholder="" value="{{ isbn }}"
+                       autofocus>
+            </div>
+            <label for="pub" class="col-md-1 col-form-label"> 出版社 </label>
+            <div class="col-sm-2">
+                <input name="pub" type="text" class="form-control" id="pub" placeholder="" value="{{ pub }}" autofocus>
+            </div>
+        </div>
+        <button class="btn btn-primary" data-toggle="modal" data-target="#myModal"> 查询</button>
+    </form>
+    <br>
+    {% if msg %}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="display:inline-flex">
+            {{ msg }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <br>
+    {% endif %}
+
+    {% if request.method == 'POST' %}
+        {% if not book_status %}
+            <div class="alert alert-warning alert-dismissible fade show" role="alert" style="display: inline-block">
+                未找到匹配信息！
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% else %}
+            <hr>
+            <br>
+            <h6 class="container-fluid"><b>查询结果:</b></h6>
+            <table class="table container-fluid">
+                <thead class="thead-light">
+                <tr class="table-primary">
+                    <th> ISBN号</th>
+                    <th> 书名</th>
+                    <th> 作者</th>
+                    <th> 出版社</th>
+                    <th> 出版年月</th>
+                    <th> 库藏册数</th>
+                    <th> 未借出册数</th>
+                    <th> 已借出册数</th>
+                    <th> 已预约册数</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for elem in book_status %}
+                    <tr>
+                        <td> {{ elem.ISBN }} </td>
+                        <td> {{ elem.bname }} </td>
+                        <td> {{ elem.author }} </td>
+                        <td> {{ elem.pub }} </td>
+                        <td> {{ elem.pubtime }} </td>
+                        <td> {{ elem.own }} </td>
+                        <td> {{ elem.not_yet_borrow }} </td>
+                        <td> {{ elem.borrowed }} </td>
+                        <td> {{ elem.reserved }} </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    {% endif %}
+</main>
+
+</body>
+</html>
+<style>
+    body {
+        background-image: url("../../static/img/background.jpg");
+        background-size: cover;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }
+</style>
